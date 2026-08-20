@@ -86,13 +86,5 @@ Use a current Chrome, Edge, Safari, or Firefox release. Camera capture requires 
 
 The core transfer path is complete for real files, clipboard text, and URLs. Reed–Solomon parity and optional AES-256-GCM encryption are intentionally isolated as protocol extensions for a future version; the current protocol never presents an unverified file as complete.
 
-## GitHub
 
-This workspace currently has no Git remote configured. After creating an empty GitHub repository, connect it with:
-
-```bash
-git remote add origin https://github.com/<your-account>/QRBlast.git
-git branch -M main
-git push -u origin main
-```
 
