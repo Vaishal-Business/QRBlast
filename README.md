@@ -16,6 +16,8 @@ QRBlast is an offline-first Progressive Web App for transferring real files betw
 - Works offline after the app shell has been opened and cached.
 - Supports clipboard text and URL transfers by wrapping them as real files.
 - Includes a fullscreen QR grid for large monitors and phone-friendly responsive layouts.
+- Starts each QR broadcast with a visible three-second countdown.
+- Allows the sender to restart the live QR stream from frame 0 without reselecting the file.
 
 No server, account, analytics, or cloud storage is used during a transfer.
 
@@ -41,8 +43,9 @@ Camera access requires a secure context: HTTPS or localhost. The sender and rece
 2. Open **Receive** on the destination device and allow camera access.
 3. Position the receiver camera toward the sender screen.
 4. Press **Start transfer** on the sender.
-5. Press **Start scanning** on the receiver.
-6. Keep the QR grid visible until the receiver reports SHA-256 verification.
+5. Wait for the three-second sender countdown to finish.
+6. Press **Start scanning** on the receiver.
+7. Keep the QR grid visible until the receiver reports SHA-256 verification.
 
 The sender does not generate QR frames before Start transfer.
 
