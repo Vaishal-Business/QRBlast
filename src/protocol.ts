@@ -1,6 +1,7 @@
 export type DeviceType = 'Desktop'|'Laptop'|'Phone'|'Tablet';
 export type TransferMeta = { id:string; name:string; type:DeviceType; browser:string; timestamp:number; fileName:string; mime:string; size:number; totalChunks:number; streams:number; chunkSize:number; hash:string };
 export type Frame = { v:1; t:string; s:number; f:number; n:number; i:number; d:string; c:number; p:string };
+export type ControlPacket = {v:1;k:'ready'|'ack'|'complete';t:string;r:number;n:number;p:number;m:number[];d?:string};
 const enc = new TextEncoder(); const dec = new TextDecoder();
 export function uid(){ return crypto.randomUUID().replaceAll('-','').slice(0,16); }
 export async function sha256(data: ArrayBuffer | Uint8Array){ const b=await crypto.subtle.digest('SHA-256',data as unknown as BufferSource); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
@@ -9,6 +10,8 @@ function b64(bytes:Uint8Array){ let s=''; for(let i=0;i<bytes.length;i+=0x8000)s
 function from64(s:string){ const raw=atob(s); return Uint8Array.from(raw,c=>c.charCodeAt(0)); }
 export function frameText(f:Frame){ return JSON.stringify(f); }
 export function parseFrame(text:string): Frame|null { try { const f=JSON.parse(text) as Frame; return f?.v===1&&typeof f.t==='string'&&typeof f.d==='string'&&f.c===crc32(f.d)?f:null; } catch { return null; } }
+export function controlText(packet:Omit<ControlPacket,'d'>){const body=JSON.stringify(packet);return JSON.stringify({...packet,d:crc32(body).toString(16)})}
+export function parseControl(text:string):ControlPacket|null{try{const p=JSON.parse(text) as ControlPacket;const {d,...body}=p;return p?.v===1&&typeof p.t==='string'&&typeof p.k==='string'&&d===crc32(JSON.stringify(body)).toString(16)?p:null}catch{return null}}
 export async function makeTransfer(file:File, streams:number, chunkSize=900, name:string, type:DeviceType){
   const bytes=new Uint8Array(await file.arrayBuffer()); const hash=await sha256(bytes); const id=uid(); const chunks:string[]=[];
   for(let i=0;i<bytes.length;i+=chunkSize) chunks.push(b64(bytes.subarray(i,i+chunkSize)));

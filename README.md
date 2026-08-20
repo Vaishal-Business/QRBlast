@@ -18,6 +18,8 @@ QRBlast is an offline-first Progressive Web App for transferring real files betw
 - Includes a fullscreen QR grid for large monitors and phone-friendly responsive layouts.
 - Starts each QR broadcast with a visible three-second countdown.
 - Allows the sender to restart the live QR stream from frame 0 without reselecting the file.
+- Uses a bidirectional optical control channel: the receiver displays ACK/progress QR frames and the sender camera reads them.
+- Verifies position by requiring repeated metadata detection before locking the optical link.
 
 No server, account, analytics, or cloud storage is used during a transfer.
 
@@ -48,6 +50,17 @@ Camera access requires a secure context: HTTPS or localhost. The sender and rece
 7. Keep the QR grid visible until the receiver reports SHA-256 verification.
 
 The sender does not generate QR frames before Start transfer.
+
+## Face-to-face optical link
+
+For synchronized progress and ACKs, position the devices screen-to-camera in both directions:
+
+```text
+screen A  →  camera B
+camera A  ←  screen B
+```
+
+The sender displays data QR frames and opens its front-facing camera to read the receiver’s acknowledgement QR. The receiver displays a small status QR containing transfer ID, received chunk count, byte progress, and completion state. Three repeated metadata detections lock the position before the receiver reports a verified optical link.
 
 ## Architecture
 
